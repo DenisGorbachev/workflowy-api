@@ -3,5 +3,5 @@
 version = 4
 
 [[package]]
-name = "rust-public-lib-template"
+name = "workflowy-api"
 version = "0.1.0"
