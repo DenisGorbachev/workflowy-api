@@ -35,6 +35,22 @@ announcement = ""
 readme = { generate = false }
 
 [dependencies]
+derive_more = { version = "2.1.1", features = ["full"] }
+governor = "0.10.4"
+reqwest = { version = "0.13.3", default-features = false, features = ["json", "query", "rustls"] }
+rkyv = { version = "0.8.16", optional = true }
+serde = { version = "1.0.228", features = ["derive"], optional = true }
+subtype = { git = "https://github.com/DenisGorbachev/subtype", version = "0.1.0" }
+thiserror = "2.0.18"
+timestamp-please = { version = "0.2.0", features = ["serde"] }
+
+[features]
+default = ["serde"]
+rkyv = ["dep:rkyv", "timestamp-please/rkyv"]
+serde = ["dep:serde"]
+
+[dev-dependencies]
+tokio = { version = "1.52.1", features = ["macros", "rt-multi-thread"] }
 #derive-getters = { version = "0.5.0", features = ["auto_copy_getters"] }
 #derive-new = "0.7.0"
 #derive_more = { version = "2.1.1", features = ["full"] }
@@ -44,8 +60,3 @@ readme = { generate = false }
 #strum = { version = "0.27.2", features = ["derive"] }
 #stub-macro = { version = "0.2.1" }
 #subtype = { git = "https://github.com/DenisGorbachev/subtype" }
-
-
-
-
-
