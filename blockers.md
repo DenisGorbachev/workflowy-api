@@ -1,3 +1,0 @@
-- B001: The live Workflowy integration test cannot complete in this sandbox because `workflowy.com` is not listed in `/etc/dnsmasq.d/allowed_domains.conf`, and direct HTTPS connections to `workflowy.com:443` time out. Workarounds:
-  - Allow `workflowy.com` in the sandbox network policy and rerun `mise run agent:on:stop`.
-  - Run `mise run agent:on:stop` in an environment with outbound HTTPS access to `workflowy.com`.

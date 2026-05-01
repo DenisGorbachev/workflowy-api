@@ -1,14 +1,19 @@
-#[cfg(feature = "serde")]
-use crate::{GetNodesRequestRef, GetNodesResponse};
+use crate::{GetNodesRequestOwn, GetNodesRequestRef, GetNodesResponse};
 use crate::{Key, Limiter};
 use derive_more::{From, Into};
+use errgonomic::handle;
+use std::sync::LazyLock;
 use thiserror::Error;
+use url::Url;
+use url_macro::url;
 
-#[cfg(feature = "serde")]
-const NODES_URL: &str = "https://workflowy.com/api/v1/nodes";
+pub static BASE: LazyLock<Url> = LazyLock::new(|| url!("https://workflowy.com/api/v1/"));
+
+const NODES_PATH: &str = "nodes";
 
 #[derive(From, Into, Eq, PartialEq, Clone, Debug)]
 pub struct Client {
+    pub base: Url,
     pub key: Key,
     pub limiter: Limiter,
 }
@@ -18,39 +23,45 @@ impl Client {
         Self::from(key.into())
     }
 
-    #[cfg(feature = "serde")]
-    pub async fn get_nodes(&self, request: GetNodesRequestRef<'_>) -> Result<GetNodesResponse, GetNodesError> {
-        use GetNodesError::*;
+    pub fn base() -> &'static Url {
+        &BASE
+    }
 
-        let http = reqwest::Client::builder()
-            .build()
-            .map_err(|source| BuildHttpClient {
-                source,
-            })?;
+    pub async fn get_nodes(&self, request: GetNodesRequestRef<'_>) -> Result<GetNodesResponse, ClientGetNodesError> {
+        use ClientGetNodesError::*;
+
+        let request = GetNodesRequestOwn::from(request);
+        let base = self.base.clone();
+        let path = NODES_PATH.to_string();
+        let nodes_url = handle!(base.join(path.as_str()), JoinNodesUrlFailed, base, path);
+        let http = handle!(reqwest::Client::builder().build(), BuildHttpClientFailed);
+        let request_ref = request.as_ref();
+        let url_for_http = nodes_url.clone();
+        let url_for_error = nodes_url.clone();
+        let request_for_error = request.clone();
         let response = http
-            .get(NODES_URL)
+            .get(url_for_http)
             .bearer_auth(&self.key)
-            .query(&request)
+            .query(&request_ref)
             .send()
-            .await
-            .map_err(|source| Send {
-                source,
-            })?;
+            .await;
+        let response = handle!(response, SendFailed, url: url_for_error, request: request_for_error);
         let status = response.status();
 
         if status.is_success() {
-            response
-                .json::<GetNodesResponse>()
-                .await
-                .map_err(|source| Decode {
-                    source,
-                })
+            let url_for_error = nodes_url.clone();
+            let request_for_error = request.clone();
+            let response = response.json::<GetNodesResponse>().await;
+            Ok(handle!(response, DecodeResponseFailed, url: url_for_error, request: request_for_error))
         } else {
-            let body = response.text().await.map_err(|source| ReadErrorBody {
-                source,
-            })?;
-            Err(UnexpectedStatus {
+            let url_for_error = nodes_url.clone();
+            let request_for_error = request.clone();
+            let body = response.text().await;
+            let body = handle!(body, ReadErrorBodyFailed, status, url: url_for_error, request: request_for_error);
+            Err(UnexpectedStatusInvalid {
                 status,
+                url: nodes_url,
+                request,
                 body,
             })
         }
@@ -60,6 +71,7 @@ impl Client {
 impl From<Key> for Client {
     fn from(key: Key) -> Self {
         Self {
+            base: Self::base().clone(),
             key,
             limiter: Limiter,
         }
@@ -67,15 +79,17 @@ impl From<Key> for Client {
 }
 
 #[derive(Error, Debug)]
-pub enum GetNodesError {
+pub enum ClientGetNodesError {
+    #[error("failed to join nodes path '{path}' to Workflowy API base URL '{base}'")]
+    JoinNodesUrlFailed { source: url::ParseError, base: Url, path: String },
     #[error("failed to build HTTP client")]
-    BuildHttpClient { source: reqwest::Error },
-    #[error("failed to send get nodes request")]
-    Send { source: reqwest::Error },
-    #[error("Workflowy returned status {status}: {body}")]
-    UnexpectedStatus { status: reqwest::StatusCode, body: String },
-    #[error("failed to read Workflowy error response body")]
-    ReadErrorBody { source: reqwest::Error },
+    BuildHttpClientFailed { source: reqwest::Error },
+    #[error("failed to send get nodes request to '{url}'")]
+    SendFailed { source: reqwest::Error, url: Url, request: GetNodesRequestOwn },
+    #[error("Workflowy returned status {status} from '{url}': {body}")]
+    UnexpectedStatusInvalid { status: reqwest::StatusCode, url: Url, request: GetNodesRequestOwn, body: String },
+    #[error("failed to read Workflowy error response body from '{url}'")]
+    ReadErrorBodyFailed { source: reqwest::Error, status: reqwest::StatusCode, url: Url, request: GetNodesRequestOwn },
     #[error("failed to decode get nodes response")]
-    Decode { source: reqwest::Error },
+    DecodeResponseFailed { source: reqwest::Error, url: Url, request: GetNodesRequestOwn },
 }

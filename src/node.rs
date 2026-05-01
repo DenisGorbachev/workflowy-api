@@ -1,18 +1,18 @@
 use crate::{NodeData, NodeId, WorkflowyTimestamp};
 
-#[derive(Eq, PartialEq, Clone, Debug)]
-#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-#[cfg_attr(feature = "rkyv", derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize))]
+#[derive(serde::Serialize, serde::Deserialize, Eq, PartialEq, Hash, Clone, Debug)]
 pub struct Node {
     pub id: NodeId,
     pub name: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub note: Option<String>,
     pub priority: u64,
     pub data: NodeData,
-    #[cfg_attr(feature = "serde", serde(rename = "createdAt"))]
+    #[serde(rename = "createdAt")]
     pub created_at: WorkflowyTimestamp,
-    #[cfg_attr(feature = "serde", serde(rename = "modifiedAt"))]
+    #[serde(rename = "modifiedAt")]
     pub modified_at: WorkflowyTimestamp,
-    #[cfg_attr(feature = "serde", serde(rename = "completedAt"))]
+    #[serde(rename = "completedAt")]
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub completed_at: Option<WorkflowyTimestamp>,
 }

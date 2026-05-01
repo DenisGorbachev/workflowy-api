@@ -565,7 +565,7 @@ Every fallible function must return an error with enough data for the caller to 
 * Every fallible function body must use the error enum variant names without the error enum name prefix (for example: `ReadFileFailed` instead of `ParseConfigError::ReadFileFailed`)
 * Every error type must be an enum
 * Every error type must derive `Error` via `thiserror` v2
-* Every error type must be located in the same file as the function that returns it below other non-mod items
+* Every error type must be located below the function that returns it (in the same file)
 * Every error enum variant must be a struct variant
 * Every error enum variant must contain one field per owned variable that is relevant to the fallible expression that this variant wraps
   * The relevant variable is a variable whose value determines whether the fallible expression returns an `Ok` or an `Err`
@@ -591,14 +591,9 @@ Every fallible function must return an error with enough data for the caller to 
           TaskNotFound { query: String }
       }
       ```
-  * If the `#[error]` attribute contains fields whose values may be rendered as [hard-to-see string](#hard-to-see-string), then those fields must be wrapped in single quotes:
-    * `name` can be rendered as hard-to-see string, so it must be wrapped in single quotes:
-      * Good: `#[error("user '{name}' not found")]`
-      * Bad: `#[error("user {name} not found")]`
-    * `len` can't be rendered as hard-to-see string, so it must not be wrapped in single quotes:
-      * Good: `#[error("failed to parse {len} responses", len = responses.len())]`
-      * Bad: `#[error("failed to parse '{len}' responses", len = responses.len())]`
-  * If the error enum variant has a field whose type is `std::process::Command` or `tokio::process::Command`, it must be rendered in the error message in backticks via `render_command` function from `errgonomic` crate (requires `process` feature)
+  * If the `#[error]` attribute contains fields, then those fields must be wrapped in single quotes. This is necessary to correctly display fields that may contain spaces.
+    * Good: `#[error("user '{name}' not found")]`
+    * Bad: `#[error("user {name} not found")]`
 * If the error enum variant has a `source` field, then this field must be the first field
 * If each field of each variant of the error enum implements `Copy`, then the error enum must implement `Copy` too
 * Every error enum variant field must have an owned type (not a reference)
@@ -618,65 +613,13 @@ Every fallible function must return an error with enough data for the caller to 
   * If the function is a freestanding function, the name of the error type must be exactly equal to the name of the function converted to CamelCase concatenated with `Error`
   * If the function is an associated function, the name of the error type must be exactly equal to the name of the type without generics concatenated with the name of the function in CamelCase concatenated with `Error`
   * If the error is specified as an associated type of a foreign trait with multiple functions that return this associated error type, then the name of the error type must be exactly equal to the name of the trait including generics concatenated with the name of the type for which this trait is implemented concatenated with `Error`
-* Every `impl TryFrom<A> for B` must use a special form of error handling that matches on multiple variables at once and returns a single error that contains fields for all available variables. For example:
-  ```rust
-  #[derive(Getters, Clone, Debug)]
-  pub struct Human {
-      name: String,
-      #[getter(copy)]
-      age: u32,
-  }
-
-  #[derive(Getters, Clone, Debug)]
-  pub struct Adult {
-      name: NonEmptyString,
-      #[getter(copy)]
-      age: u32,
-  }
-
-  impl TryFrom<Human> for Adult {
-      type Error = TryFromHumanForAdultError;
-
-      fn try_from(input: Human) -> Result<Self, Self::Error> {
-          use TryFromHumanForAdultError::*;
-          let Human {
-              name,
-              age,
-          } = input;
-          let name_result = NonEmptyString::try_from(name);
-          let is_adult = age > 18;
-          match (name_result, is_adult) {
-              (Ok(name), true) => Ok(Self {
-                  name,
-                  age,
-              }),
-              (name_result, is_adult) => Err(ConversionFailed {
-                  name_result,
-                  age,
-                  is_adult,
-              }),
-          }
-      }
-  }
-
-  #[derive(Error, Debug)]
-  pub enum TryFromHumanForAdultError {
-      #[error("failed to convert human to adult")]
-      ConversionFailed { name_result: Result<NonEmptyString, TryFromStringForNonEmptyStringError>, age: u32, is_adult: bool },
-  }
-  ```
+* If the error enum is defined for a `TryFrom<A> for B` impl, then its name must be equal to "Convert{A}To{B}Error"
 
 ### Definitions
 
 #### Fallible expression
 
 An expression that returns a `Result`.
-
-#### Fallible expression group
-
-A group of [fallible expressions](#fallible-expression) where each output variable does not depend on the output variables of other fallible expressions within the same group.
-
-Aliases: FEG.
 
 #### Data type
 
@@ -697,13 +640,9 @@ Examples:
 * `RestClient` doesn't point to the actual data, it only allows querying it.
 * `DatabaseConnection` doesn't hold the actual data, it only allows querying it.
 
-#### Hard-to-see string
-
-A string that is empty or contains only whitespace characters.
-
 ### Files
 
-### File: src/functions/exit.rs
+### File: src/functions/exit\_result.rs
 
 ```rust
 use crate::eprintln_error;
@@ -723,17 +662,6 @@ pub fn exit_result<E: Error>(result: Result<ExitCode, E>) -> ExitCode {
         eprintln_error(&err);
         ExitCode::FAILURE
     })
-}
-
-/// Converts an [`Option`] into an [`ExitCode`], printing a detailed error trace on failure.
-pub fn exit_option<E: Error>(option: Option<E>) -> ExitCode {
-    match option {
-        None => ExitCode::SUCCESS,
-        Some(err) => {
-            eprintln_error(&err);
-            ExitCode::FAILURE
-        }
-    }
 }
 
 /// Converts an [`impl IntoIterator<Item = Result<(), E>>`](IntoIterator) into an [`ExitCode`], printing a detailed error trace on the first failure.
@@ -805,23 +733,6 @@ pub fn partition_result<T, E>(results: impl IntoIterator<Item = Result<T, E>>) -
     });
 
     if errors.is_empty() { Ok(oks) } else { Err(errors) }
-}
-```
-
-### File: src/functions/render\_command.rs
-
-```rust
-use std::process::Command;
-
-pub fn render_command(command: &Command) -> String {
-    let parts = core::iter::once(command.get_program().to_string_lossy())
-        .chain(command.get_args().map(|arg| arg.to_string_lossy()))
-        .collect::<Vec<_>>();
-    let result = shlex::try_join(parts.iter().map(|x| x.as_ref()));
-    match result {
-        Ok(string) => string,
-        Err(_) => command.get_program().to_string_lossy().into_owned(),
-    }
 }
 ```
 
@@ -1274,17 +1185,10 @@ cfg_if::cfg_if! {
     if #[cfg(feature = "std")] {
         mod writeln_error;
         mod write_to_named_temp_file;
-        mod exit;
+        mod exit_result;
         pub use writeln_error::*;
         pub use write_to_named_temp_file::*;
-        pub use exit::*;
-    }
-}
-
-cfg_if::cfg_if! {
-    if #[cfg(all(feature = "process"))] {
-        mod render_command;
-        pub use render_command::*;
+        pub use exit_result::*;
     }
 }
 ```
@@ -1391,9 +1295,6 @@ pub use types::*;
 mod functions;
 
 pub use functions::*;
-
-#[cfg(all(test, feature = "std"))]
-mod drafts;
 ````
 
 ### File: src/macros.rs
@@ -1585,7 +1486,6 @@ macro_rules! _index_err_async {
 
 #[cfg(all(test, feature = "std"))]
 mod tests {
-
     use crate::{ErrVec, ItemError, PathBufDisplay};
     use futures::future::join_all;
     use serde::{Deserialize, Serialize};
@@ -1806,7 +1706,7 @@ mod tests {
     }
 
     #[derive(Clone, Debug)]
-    struct State {
+    struct Db {
         user: User,
     }
 
@@ -1816,19 +1716,12 @@ mod tests {
     }
 
     #[allow(dead_code)]
-    #[derive(Clone, Debug)]
-    struct Book {
-        user_idx: usize,
-        name: String,
-    }
-
-    #[allow(dead_code)]
-    fn get_username(state: Arc<RwLock<State>>) -> Result<String, GetUsernameError> {
+    fn get_username(db: Arc<RwLock<Db>>) -> Result<String, GetUsernameError> {
         use GetUsernameError::*;
-        // `state.read()` returns `LockResult` whose Err variant is `PoisonError<RwLockReadGuard<'_, T>>`, which contains an anonymous lifetime
+        // `db.read()` returns `LockResult` whose Err variant is `PoisonError<RwLockReadGuard<'_, T>>`, which contains an anonymous lifetime
         // The error enum returned from this function must contain only owned fields, so it can't contain a `source` that has a lifetime
         // Therefore, we have to use handle_discard!, although it is discouraged
-        let guard = handle_discard!(state.read(), AcquireReadLockFailed);
+        let guard = handle_discard!(db.read(), AcquireReadLockFailed);
         let username = guard.user.username.clone();
         Ok(username)
     }
@@ -1837,42 +1730,6 @@ mod tests {
     pub enum GetUsernameError {
         #[error("failed to acquire read lock")]
         AcquireReadLockFailed,
-    }
-
-    #[derive(Clone, Debug)]
-    struct Db {
-        users: Vec<User>,
-        books: Vec<Book>,
-    }
-
-    impl Db {
-        /// Validates only the foreign keys
-        /// Assumes that the collection items have already been validated before they were inserted
-        #[allow(dead_code)]
-        pub fn validate(&self) -> impl Iterator<Item = DbValidateError> {
-            use DbValidateError::*;
-
-            self.books
-                .iter()
-                .enumerate()
-                .filter_map(|(book_idx, book)| {
-                    let user_idx = book.user_idx;
-                    if self.users.get(user_idx).is_none() {
-                        Some(UserNotFound {
-                            book_idx,
-                            user_idx,
-                        })
-                    } else {
-                        None
-                    }
-                })
-        }
-    }
-
-    #[derive(Error, Debug)]
-    pub enum DbValidateError {
-        #[error("book #{book_idx} has a non-existent user #{user_idx}")]
-        UserNotFound { book_idx: usize, user_idx: usize },
     }
 
     #[allow(dead_code)]
@@ -1979,18 +1836,15 @@ readme = { generate = false }
 
 [dependencies]
 derive_more = { version = "2.1.1", features = ["full"] }
+errgonomic = "0.5.1"
 governor = "0.10.4"
 reqwest = { version = "0.13.3", default-features = false, features = ["json", "query", "rustls"] }
-rkyv = { version = "0.8.16", optional = true }
-serde = { version = "1.0.228", features = ["derive"], optional = true }
+serde = { version = "1.0.228", features = ["derive"] }
 subtype = { git = "https://github.com/DenisGorbachev/subtype", version = "0.1.0" }
 thiserror = "2.0.18"
 timestamp-please = { version = "0.2.0", features = ["serde"] }
-
-[features]
-default = ["serde"]
-rkyv = ["dep:rkyv", "timestamp-please/rkyv"]
-serde = ["dep:serde"]
+url = "2.5.8"
+url-macro = "0.2.3"
 
 [dev-dependencies]
 tokio = { version = "1.52.1", features = ["macros", "rt-multi-thread"] }
@@ -2052,6 +1906,6 @@ pub use parent_id::*;
 mod workflowy_timestamp;
 pub use workflowy_timestamp::*;
 
-#[cfg(all(test, feature = "serde"))]
+#[cfg(test)]
 mod integration_tests;
 ```

@@ -1,10 +1,8 @@
 use crate::{GetNodesRequestRef, ParentId};
 
-#[derive(Eq, PartialEq, Hash, Clone, Debug)]
-#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-#[cfg_attr(feature = "rkyv", derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize))]
+#[derive(serde::Serialize, serde::Deserialize, Eq, PartialEq, Hash, Clone, Debug)]
 pub struct GetNodesRequestOwn {
-    #[cfg_attr(feature = "serde", serde(rename = "parent_id"))]
+    #[serde(rename = "parent_id")]
     pub parent_id: ParentId,
 }
 

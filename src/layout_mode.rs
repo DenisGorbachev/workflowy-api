@@ -1,5 +1,4 @@
 #[derive(Eq, PartialEq, Hash, Clone, Debug)]
-#[cfg_attr(feature = "rkyv", derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize))]
 pub enum LayoutMode {
     Bullets,
     Todo,
@@ -51,7 +50,6 @@ impl From<&str> for LayoutMode {
     }
 }
 
-#[cfg(feature = "serde")]
 impl serde::Serialize for LayoutMode {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
@@ -61,12 +59,11 @@ impl serde::Serialize for LayoutMode {
     }
 }
 
-#[cfg(feature = "serde")]
 impl<'de> serde::Deserialize<'de> for LayoutMode {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
         D: serde::Deserializer<'de>,
     {
-        String::deserialize(deserializer).map(Self::from)
+        <String as serde::Deserialize>::deserialize(deserializer).map(Self::from)
     }
 }

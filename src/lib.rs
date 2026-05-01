@@ -42,5 +42,5 @@ pub use parent_id::*;
 mod workflowy_timestamp;
 pub use workflowy_timestamp::*;
 
-#[cfg(all(test, feature = "serde"))]
+#[cfg(test)]
 mod integration_tests;
