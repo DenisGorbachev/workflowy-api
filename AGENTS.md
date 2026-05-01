@@ -437,6 +437,8 @@ Requirements:
 * Must have dependencies:
   * `reqwest`
   * `governor`
+  * `subtype`
+  * `timestamp-please`
   * `serde` (optional)
   * `rkyv` (optional)
 
