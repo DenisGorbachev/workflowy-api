@@ -14,8 +14,9 @@ Requirements:
   - `governor`
   - `subtype`
   - `timestamp-please`
-  - `serde` (optional)
-  - `rkyv` (optional)
+  - `url-macro`
+  - `errgonomic`
+  - `serde`
 
 ## `workflowy-api` lib crate
 
@@ -40,11 +41,14 @@ Requirements:
 - Must have attributes:
   - `#[derive(From, Into, Eq, PartialEq, Clone, Debug)]`
 - Must have fields:
+  - `pub base: Url`
   - `pub key: Key`
   - `pub limiter: Limiter`
 - Must have methods:
   - `pub fn new(key: impl Into<Key>)`
     - Must call `Self::from`
+- Must have associated constants:
+  - `BASE: Url` (use `url!` macro to set the value)
 - Must have impls:
   - `From<Key>`
 
@@ -67,6 +71,8 @@ A type with references to data for making an API request.
 Requirements:
 
 - Ident must end with "RequestRef".
+- Must have derives: `Clone`, `Copy`, `Debug`.
+- Should have derives: `Eq`, `PartialEq`, `Hash`.
 - Every field must be an immutable reference (not owned).
 
 ## Request own type
@@ -76,6 +82,8 @@ A type with owned data for making an API request.
 Requirements:
 
 - Ident must end with "RequestOwn".
+- Must have derives: `Clone`, `Debug`.
+- Should have derives: `Eq`, `PartialEq`, `Hash`.
 - Every field must be owned (not a reference).
 
 ## Response type
@@ -85,3 +93,5 @@ A type with owned data for an API response.
 Requirements:
 
 - Ident must end with "Response".
+- Must have derives: `Clone`, `Debug`.
+- Should have derives: `Eq`, `PartialEq`, `Hash`.
