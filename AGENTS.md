@@ -478,7 +478,7 @@ Requirements:
   * Request data types in `request` module
   * Response data types in `response` module
   * Common data types in `common` module
-  * Common technical types in
+  * [Technical types](#technical-type) at the top level (attached to src/lib.rs)
 
 ### Key
 
@@ -515,6 +515,16 @@ Requirements:
   * `Default`
 
 ### `workflowy-api` bin crate
+
+### Technical type
+
+A type that is not a part of any request or response body.
+
+Examples:
+
+* [Client](#client)
+* [Key](#key)
+* [Limiter](#limiter)
 
 ### Request cow type
 
