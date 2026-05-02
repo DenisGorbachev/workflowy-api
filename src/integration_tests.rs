@@ -18,8 +18,8 @@ async fn must_get_nodes() -> Result<(), MustGetNodesError> {
 
 #[derive(Error, Debug)]
 pub enum MustGetNodesError {
-    #[error("failed to create Workflowy API client")]
+    #[error("failed to create an API client")]
     ClientNewFailed { source: ClientNewError },
-    #[error("failed to get Workflowy nodes")]
+    #[error("failed to get nodes")]
     GetNodesFailed { source: ClientGetNodesError, request: GetNodesRequest<'static> },
 }
