@@ -437,10 +437,6 @@ You are running in a sandbox with limited network access.
   * `unit` must be a string that contains the unit name in singular form (for example: "nanosecond", "second", "minute", "kilogram", "meter")
     * `unit` may contain a prefix (for example: "nano", "kilo")
 
-## Guidelines for `subtype`
-
-* The macro calls that begin with `subtype` (for example, `subtype!` and `subtype_string!`) expand to newtypes.
-
 ## Workflowy API concepts
 
 ### `workflowy-api`
@@ -455,7 +451,7 @@ Requirements:
 * Must have dependencies:
   * `reqwest`
   * `governor`
-  * `subtype`
+  * `secrecy`
   * `timestamp-please`
   * `url-macro`
   * `errgonomic`
@@ -482,7 +478,7 @@ Requirements:
 
 ### Key
 
-A type alias for API key as `String`.
+A type alias for API key as `secrecy::SecretString`.
 
 ### Client
 
@@ -2723,7 +2719,6 @@ errgonomic = "0.5.1"
 governor = "0.10.4"
 reqwest = { version = "0.13.3", features = ["json", "query"] }
 serde = { version = "1.0.228", features = ["derive"] }
-subtype = { git = "https://github.com/DenisGorbachev/subtype", version = "0.1.0" }
 thiserror = "2.0.18"
 timestamp-please = { version = "0.2.0", features = ["serde"] }
 url = "2.5.8"

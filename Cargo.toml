@@ -40,7 +40,6 @@ errgonomic = "0.5.1"
 governor = "0.10.4"
 reqwest = { version = "0.13.3", features = ["json", "query"] }
 serde = { version = "1.0.228", features = ["derive"] }
-subtype = { git = "https://github.com/DenisGorbachev/subtype", version = "0.1.0" }
 thiserror = "2.0.18"
 timestamp-please = { version = "0.2.0", features = ["serde"] }
 url = "2.5.8"

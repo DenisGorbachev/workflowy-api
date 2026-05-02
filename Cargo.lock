@@ -160,31 +160,11 @@ dependencies = [
 
 [[package]]
 name = "derive_more"
-version = "1.0.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4a9b99b9cbbe49445b21764dc0625032a89b145a2642e67603e1c936f5458d05"
-dependencies = [
- "derive_more-impl 1.0.0",
-]
-
-[[package]]
-name = "derive_more"
 version = "2.1.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d751e9e49156b02b44f9c1815bcb94b984cdcc4396ecc32521c739452808b134"
 dependencies = [
- "derive_more-impl 2.1.1",
-]
-
-[[package]]
-name = "derive_more-impl"
-version = "1.0.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "cb7330aeadfbe296029522e6c40f315320aba36fc43a5b3632f3795348f3bd22"
-dependencies = [
- "proc-macro2",
- "quote",
- "syn",
+ "derive_more-impl",
 ]
 
 [[package]]
@@ -238,16 +218,6 @@ name = "errgonomic"
 version = "0.5.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "74b33711745064fd87e330345058524fb009a7e8767c3ede875c61550b179d45"
-dependencies = [
- "cfg-if",
- "tempfile",
- "thiserror",
-]
-
-[[package]]
-name = "errgonomic"
-version = "0.5.1"
-source = "git+https://github.com/DenisGorbachev/errgonomic#69695b43f69bae2e3dea78d953977431bb23b336"
 dependencies = [
  "cfg-if",
  "tempfile",
@@ -886,12 +856,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "pretty-type-name"
-version = "1.0.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f0f73cdaf19b52e6143685c3606206e114a4dfa969d6b14ec3894c88eb38bd4b"
-
-[[package]]
 name = "proc-macro2"
 version = "1.0.106"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1371,11 +1335,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "6ce2be8dc25455e1f91df71bfa12ad37d7af1092ae736f3a6cd0e37bc7810596"
 
 [[package]]
-name = "standard-traits"
-version = "0.1.0"
-source = "git+https://github.com/DenisGorbachev/standard-traits#b8d3c44955ba00f7b9e5b535a056363e83fd685d"
-
-[[package]]
 name = "static-env-var"
 version = "0.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1386,17 +1345,6 @@ name = "subtle"
 version = "2.6.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "13c2bddecc57b384dee18652358fb23172facb8a2c51ccc10d74c157bdea3292"
-
-[[package]]
-name = "subtype"
-version = "0.1.0"
-source = "git+https://github.com/DenisGorbachev/subtype#7654d90716822f2bd0bd2f2387ae40c0cd5d1b6a"
-dependencies = [
- "derive_more 1.0.0",
- "errgonomic 0.5.1 (git+https://github.com/DenisGorbachev/errgonomic)",
- "pretty-type-name",
- "standard-traits",
-]
 
 [[package]]
 name = "syn"
@@ -2038,13 +1986,12 @@ checksum = "f17a85883d4e6d00e8a97c586de764dabcc06133f7f1d55dce5cdc070ad7fe59"
 name = "workflowy-api"
 version = "0.1.0"
 dependencies = [
- "derive_more 2.1.1",
- "errgonomic 0.5.1 (registry+https://github.com/rust-lang/crates.io-index)",
+ "derive_more",
+ "errgonomic",
  "governor",
  "reqwest",
  "serde",
  "static-env-var",
- "subtype",
  "thiserror",
  "timestamp-please",
  "tokio",

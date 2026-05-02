@@ -12,7 +12,7 @@ Requirements:
 - Must have dependencies:
   - `reqwest`
   - `governor`
-  - `subtype`
+  - `secrecy`
   - `timestamp-please`
   - `url-macro`
   - `errgonomic`
@@ -39,7 +39,7 @@ Requirements:
 
 ## Key
 
-A type alias for API key as `String`.
+A type alias for API key as `secrecy::SecretString`.
 
 ## Client
 
