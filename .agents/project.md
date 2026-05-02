@@ -31,6 +31,10 @@ Requirements:
 - Must derive `Serialize` and `Deserialize` from `serde`
   - Should not contain manual `Serialize` and `Deserialize` impls
   - Should use type-level `serde` attributes (e.g. `rename_all`)
+- Must have the following layout:
+  - Request data types in `request` module
+  - Response data types in `response` module
+  - Common data types in `common` module
 
 ## Key
 

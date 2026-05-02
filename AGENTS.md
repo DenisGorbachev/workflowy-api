@@ -474,6 +474,10 @@ Requirements:
 * Must derive `Serialize` and `Deserialize` from `serde`
   * Should not contain manual `Serialize` and `Deserialize` impls
   * Should use type-level `serde` attributes (e.g. `rename_all`)
+* Must have the following layout:
+  * Request data types in `request` module
+  * Response data types in `response` module
+  * Common data types in `common` module
 
 ### Key
 
@@ -1856,7 +1860,7 @@ readme = { generate = false }
 derive_more = { version = "2.1.1", features = ["full"] }
 errgonomic = "0.5.1"
 governor = "0.10.4"
-reqwest = { version = "0.13.3", default-features = false, features = ["json", "query", "rustls"] }
+reqwest = { version = "0.13.3", features = ["json", "query"] }
 serde = { version = "1.0.228", features = ["derive"] }
 subtype = { git = "https://github.com/DenisGorbachev/subtype", version = "0.1.0" }
 thiserror = "2.0.18"
@@ -1891,35 +1895,14 @@ use tokio as _;
 mod client;
 pub use client::*;
 
-mod get_nodes_request;
-pub use get_nodes_request::*;
+pub mod common;
+pub use common::*;
 
-mod get_nodes_response;
-pub use get_nodes_response::*;
+pub mod request;
+pub use request::*;
 
-mod key;
-pub use key::*;
-
-mod layout_mode;
-pub use layout_mode::*;
-
-mod limiter;
-pub use limiter::*;
-
-mod node;
-pub use node::*;
-
-mod node_data;
-pub use node_data::*;
-
-mod node_id;
-pub use node_id::*;
-
-mod parent_id;
-pub use parent_id::*;
-
-mod workflowy_timestamp;
-pub use workflowy_timestamp::*;
+pub mod response;
+pub use response::*;
 
 #[cfg(test)]
 mod integration_tests;
