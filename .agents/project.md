@@ -41,16 +41,16 @@ Requirements:
 - Must have attributes:
   - `#[derive(From, Into, Eq, PartialEq, Clone, Debug)]`
 - Must have fields:
+  - `pub inner: Client` (`use reqwest::Client`)
   - `pub base: Url`
-  - `pub key: Key`
   - `pub limiter: Limiter`
 - Must have methods:
   - `pub fn new(key: impl Into<Key>)`
     - Must call `Self::from`
-- Must have associated constants:
-  - `BASE: Url` (use `url!` macro to set the value)
 - Must have impls:
+  - `From<Client>`
   - `From<Key>`
+    - Must set the bearer auth header via `default_headers`
 
 ## Limiter
 

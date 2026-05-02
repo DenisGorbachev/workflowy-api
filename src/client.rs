@@ -8,9 +8,8 @@ use thiserror::Error;
 use url::Url;
 use url_macro::url;
 
-pub static BASE: LazyLock<Url> = LazyLock::new(|| url!("https://workflowy.com/api/v1/"));
-
-const NODES_PATH: &str = "nodes";
+// The trailing slash is required for Url::join to work properly
+pub static BASE_URL: LazyLock<Url> = LazyLock::new(|| url!("https://workflowy.com/api/v1/"));
 
 #[derive(From, Into, Eq, PartialEq, Clone, Debug)]
 pub struct Client {
@@ -20,18 +19,18 @@ pub struct Client {
 }
 
 impl Client {
+    const NODES_PATH: &str = "nodes";
+
     pub fn new(key: impl Into<Key>) -> Self {
         Self::from(key.into())
     }
 
-    pub fn base() -> &'static Url {
-        &BASE
-    }
-
     pub async fn get_nodes(&self, request: &GetNodesRequestRef<'_>) -> Result<GetNodesResponse, ClientGetNodesError> {
         use ClientGetNodesError::*;
-        let path = NODES_PATH;
-        let url = handle!(self.base.join(path), BuildUrlFailed, path);
+        let url = self
+            .base
+            .join(Self::NODES_PATH)
+            .expect("always succeeds because `path` is valid");
         let http = handle!(reqwest::Client::builder().build(), BuildHttpClientFailed);
         let result = http
             .get(url)
@@ -77,7 +76,7 @@ pub enum HandleError {
 impl From<Key> for Client {
     fn from(key: Key) -> Self {
         Self {
-            base: Self::base().clone(),
+            base: BASE_URL.clone(),
             key,
             limiter: Limiter,
         }
@@ -86,8 +85,6 @@ impl From<Key> for Client {
 
 #[derive(Error, Debug)]
 pub enum ClientGetNodesError {
-    #[error("failed to build URL for path: '{path}'")]
-    BuildUrlFailed { source: url::ParseError, path: &'static str },
     #[error("failed to build HTTP client")]
     BuildHttpClientFailed { source: reqwest::Error },
     #[error("failed to send get nodes request")]
