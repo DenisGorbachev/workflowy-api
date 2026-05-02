@@ -17,6 +17,8 @@ Requirements:
   - `url-macro`
   - `errgonomic`
   - `serde`
+- May have dependencies:
+  - `strum`
 
 ## `workflowy-api` lib crate
 
@@ -27,6 +29,8 @@ Requirements:
 - Must contain [request ref types](#request-ref-type) for each request in the API
 - Must contain [request own types](#request-own-type) for each request in the API
 - Must contain [response types](#response-type) for each response in the API
+- Must derive `Serialize` and `Deserialize` from `serde`
+  - Should not contain manual `Serialize` and `Deserialize` impls
 
 ## Key
 
