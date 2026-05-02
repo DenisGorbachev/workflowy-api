@@ -478,6 +478,7 @@ Requirements:
   * Request data types in `request` module
   * Response data types in `response` module
   * Common data types in `common` module
+  * Common technical types in
 
 ### Key
 
@@ -1893,15 +1894,15 @@ mod client;
 
 pub use client::*;
 
-pub mod common;
+mod common;
 
 pub use common::*;
 
-pub mod request;
+mod request;
 
 pub use request::*;
 
-pub mod response;
+mod response;
 
 pub use response::*;
 

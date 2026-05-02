@@ -7,15 +7,15 @@ mod client;
 
 pub use client::*;
 
-pub mod common;
+mod common;
 
 pub use common::*;
 
-pub mod request;
+mod request;
 
 pub use request::*;
 
-pub mod response;
+mod response;
 
 pub use response::*;
 

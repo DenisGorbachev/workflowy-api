@@ -35,6 +35,7 @@ Requirements:
   - Request data types in `request` module
   - Response data types in `response` module
   - Common data types in `common` module
+  - Common technical types in
 
 ## Key
 
