@@ -1,4 +1,7 @@
-#[derive(Eq, PartialEq, Hash, Clone, Debug)]
+use serde::{Deserialize, Serialize};
+
+#[derive(Serialize, Deserialize, Eq, PartialEq, Hash, Clone, Debug)]
+#[serde(rename_all = "kebab-case")]
 pub enum LayoutMode {
     Bullets,
     Todo,
@@ -7,63 +10,4 @@ pub enum LayoutMode {
     H3,
     CodeBlock,
     QuoteBlock,
-    Unknown(String),
-}
-
-impl LayoutMode {
-    pub fn as_str(&self) -> &str {
-        use LayoutMode::*;
-
-        match self {
-            Bullets => "bullets",
-            Todo => "todo",
-            H1 => "h1",
-            H2 => "h2",
-            H3 => "h3",
-            CodeBlock => "code-block",
-            QuoteBlock => "quote-block",
-            Unknown(value) => value.as_str(),
-        }
-    }
-}
-
-impl From<String> for LayoutMode {
-    fn from(value: String) -> Self {
-        use LayoutMode::*;
-
-        match value.as_str() {
-            "bullets" => Bullets,
-            "todo" => Todo,
-            "h1" => H1,
-            "h2" => H2,
-            "h3" => H3,
-            "code-block" => CodeBlock,
-            "quote-block" => QuoteBlock,
-            _ => Unknown(value),
-        }
-    }
-}
-
-impl From<&str> for LayoutMode {
-    fn from(value: &str) -> Self {
-        Self::from(value.to_owned())
-    }
-}
-
-impl serde::Serialize for LayoutMode {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: serde::Serializer,
-    {
-        serializer.serialize_str(self.as_str())
-    }
-}
-
-impl<'de> serde::Deserialize<'de> for LayoutMode {
-    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
-    where
-        D: serde::Deserializer<'de>,
-    {
-        <String as serde::Deserialize>::deserialize(deserializer).map(Self::from)
-    }
 }

@@ -1,7 +1,8 @@
 use crate::LayoutMode;
+use serde::{Deserialize, Serialize};
 
-#[derive(serde::Serialize, serde::Deserialize, Eq, PartialEq, Hash, Clone, Debug)]
+#[derive(Serialize, Deserialize, Eq, PartialEq, Hash, Clone, Debug)]
+#[serde(rename_all = "camelCase")]
 pub struct NodeData {
-    #[serde(rename = "layoutMode")]
     pub layout_mode: LayoutMode,
 }

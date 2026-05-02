@@ -1,6 +1,8 @@
 use crate::{NodeData, NodeId, WorkflowyTimestamp};
+use serde::{Deserialize, Serialize};
 
-#[derive(serde::Serialize, serde::Deserialize, Eq, PartialEq, Hash, Clone, Debug)]
+#[derive(Serialize, Deserialize, Eq, PartialEq, Hash, Clone, Debug)]
+#[serde(rename_all = "camelCase")]
 pub struct Node {
     pub id: NodeId,
     pub name: String,
@@ -8,11 +10,8 @@ pub struct Node {
     pub note: Option<String>,
     pub priority: u64,
     pub data: NodeData,
-    #[serde(rename = "createdAt")]
     pub created_at: WorkflowyTimestamp,
-    #[serde(rename = "modifiedAt")]
     pub modified_at: WorkflowyTimestamp,
-    #[serde(rename = "completedAt")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub completed_at: Option<WorkflowyTimestamp>,
 }

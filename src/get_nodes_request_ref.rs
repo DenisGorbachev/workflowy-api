@@ -1,5 +1,7 @@
-#[derive(serde::Serialize, serde::Deserialize, Eq, PartialEq, Hash, Clone, Copy, Debug)]
+use serde::{Deserialize, Serialize};
+
+#[derive(Serialize, Deserialize, Eq, PartialEq, Hash, Clone, Copy, Debug)]
+#[serde(rename_all = "snake_case")]
 pub struct GetNodesRequestRef<'a> {
-    #[serde(rename = "parent_id")]
     pub parent_id: &'a str,
 }

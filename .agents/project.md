@@ -31,6 +31,7 @@ Requirements:
 - Must contain [response types](#response-type) for each response in the API
 - Must derive `Serialize` and `Deserialize` from `serde`
   - Should not contain manual `Serialize` and `Deserialize` impls
+  - Should use type-level `serde` attributes (e.g. `rename_all`)
 
 ## Key
 

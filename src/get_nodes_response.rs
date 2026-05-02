@@ -1,6 +1,7 @@
 use crate::Node;
+use serde::{Deserialize, Serialize};
 
-#[derive(serde::Serialize, serde::Deserialize, Eq, PartialEq, Hash, Clone, Debug)]
+#[derive(Serialize, Deserialize, Eq, PartialEq, Hash, Clone, Debug)]
 pub struct GetNodesResponse {
     pub nodes: Vec<Node>,
 }

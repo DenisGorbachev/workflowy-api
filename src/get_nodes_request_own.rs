@@ -1,8 +1,9 @@
 use crate::{GetNodesRequestRef, ParentId};
+use serde::{Deserialize, Serialize};
 
-#[derive(serde::Serialize, serde::Deserialize, Eq, PartialEq, Hash, Clone, Debug)]
+#[derive(Serialize, Deserialize, Eq, PartialEq, Hash, Clone, Debug)]
+#[serde(rename_all = "snake_case")]
 pub struct GetNodesRequestOwn {
-    #[serde(rename = "parent_id")]
     pub parent_id: ParentId,
 }
 
