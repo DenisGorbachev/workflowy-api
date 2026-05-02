@@ -469,8 +469,7 @@ A Rust crate that exports the types related to Workflowy API.
 
 Requirements:
 
-* Must contain [request ref types](#request-ref-type) for each request in the API
-* Must contain [request own types](#request-own-type) for each request in the API
+* Must contain [request cow types](#request-cow-type) for each request in the API
 * Must contain [response types](#response-type) for each response in the API
 * Must derive `Serialize` and `Deserialize` from `serde`
   * Should not contain manual `Serialize` and `Deserialize` impls
@@ -511,6 +510,18 @@ Requirements:
   * `Default`
 
 ### `workflowy-api` bin crate
+
+### Request cow type
+
+A type for making an API request whose every field has a `Cow` type.
+
+Requirements:
+
+* Ident must end with "Request".
+* Must have derives: `Clone`, `Debug`.
+* Should have derives: `Eq`, `PartialEq`, `Hash`.
+* Every field must be a `Cow`.
+* Every field must have its own lifetime.
 
 ### Request ref type
 
