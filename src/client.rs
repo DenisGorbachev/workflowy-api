@@ -2,6 +2,8 @@ use crate::{GetNodesRequestRef, GetNodesResponse};
 use crate::{Key, Limiter};
 use derive_more::{From, Into};
 use errgonomic::handle;
+use reqwest::Client as HttpClient;
+use reqwest::header::{AUTHORIZATION, HeaderMap, HeaderValue};
 use serde::de::DeserializeOwned;
 use std::sync::LazyLock;
 use thiserror::Error;
@@ -11,18 +13,20 @@ use url_macro::url;
 // The trailing slash is required for Url::join to work properly
 pub static BASE_URL: LazyLock<Url> = LazyLock::new(|| url!("https://workflowy.com/api/v1/"));
 
-#[derive(From, Into, Eq, PartialEq, Clone, Debug)]
+#[derive(From, Into, Clone, Debug)]
 pub struct Client {
+    pub inner: HttpClient,
     pub base: Url,
-    pub key: Key,
     pub limiter: Limiter,
 }
 
 impl Client {
     const NODES_PATH: &str = "nodes";
 
-    pub fn new(key: impl Into<Key>) -> Self {
-        Self::from(key.into())
+    pub fn new(key: impl Into<Key>) -> Result<Self, ClientNewError> {
+        use ClientNewError::*;
+        let key = key.into();
+        Ok(handle!(Self::try_from(key), TryFromKeyFailed))
     }
 
     pub async fn get_nodes(&self, request: &GetNodesRequestRef<'_>) -> Result<GetNodesResponse, ClientGetNodesError> {
@@ -30,14 +34,8 @@ impl Client {
         let url = self
             .base
             .join(Self::NODES_PATH)
-            .expect("always succeeds because `path` is valid");
-        let http = handle!(reqwest::Client::builder().build(), BuildHttpClientFailed);
-        let result = http
-            .get(url)
-            .bearer_auth(&self.key)
-            .query(&request)
-            .send()
-            .await;
+            .expect("always succeeds because `NODES_PATH` is a valid relative URL path");
+        let result = self.inner.get(url).query(&request).send().await;
         let response = handle!(result, SendFailed);
         let nodes = handle!(Self::handle(response).await, HandleFailed);
         Ok(nodes)
@@ -73,20 +71,48 @@ pub enum HandleError {
     DecodeResponseFailed { source: reqwest::Error },
 }
 
-impl From<Key> for Client {
-    fn from(key: Key) -> Self {
+#[derive(Error, Debug)]
+pub enum ClientNewError {
+    #[error("failed to create Workflowy API client from key")]
+    TryFromKeyFailed { source: ConvertKeyToClientError },
+}
+
+impl From<HttpClient> for Client {
+    fn from(inner: HttpClient) -> Self {
         Self {
+            inner,
             base: BASE_URL.clone(),
-            key,
             limiter: Limiter,
         }
     }
 }
 
+impl TryFrom<Key> for Client {
+    type Error = ConvertKeyToClientError;
+
+    fn try_from(key: Key) -> Result<Self, Self::Error> {
+        use ConvertKeyToClientError::*;
+        let authorization = format!("Bearer {key}");
+        let mut authorization_header = handle!(HeaderValue::try_from(authorization), HeaderValueTryFromFailed);
+        authorization_header.set_sensitive(true);
+        let mut headers = HeaderMap::new();
+        headers.insert(AUTHORIZATION, authorization_header);
+        let inner = HttpClient::builder().default_headers(headers).build();
+        let inner = handle!(inner, BuildHttpClientFailed);
+        Ok(Self::from(inner))
+    }
+}
+
 #[derive(Error, Debug)]
-pub enum ClientGetNodesError {
+pub enum ConvertKeyToClientError {
+    #[error("failed to convert Workflowy API key into an authorization header value")]
+    HeaderValueTryFromFailed { source: reqwest::header::InvalidHeaderValue },
     #[error("failed to build HTTP client")]
     BuildHttpClientFailed { source: reqwest::Error },
+}
+
+#[derive(Error, Debug)]
+pub enum ClientGetNodesError {
     #[error("failed to send get nodes request")]
     SendFailed { source: reqwest::Error },
     #[error("failed to handle get nodes response")]

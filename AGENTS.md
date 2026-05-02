@@ -484,15 +484,15 @@ Requirements:
 * Must have attributes:
   * `#[derive(From, Into, Eq, PartialEq, Clone, Debug)]`
 * Must have fields:
-  * `pub inner: Client` (`use reqwest::Client`)
+  * `pub inner: HttpClient` (`use reqwest::Client as HttpClient;`)
   * `pub base: Url`
   * `pub limiter: Limiter`
 * Must have methods:
-  * `pub fn new(key: impl Into<Key>)`
-    * Must call `Self::from`
+  * `pub fn new(key: impl Into<Key>) -> Result<Self, ClientNewError>`
+    * Must call `Self::try_from`
 * Must have impls:
   * `From<Client>`
-  * `From<Key>`
+  * `TryFrom<Key>`
     * Must set the bearer auth header via `default_headers`
 
 ### Limiter
