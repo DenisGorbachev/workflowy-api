@@ -1,4 +1,4 @@
-use crate::{GetNodesRequestRef, GetNodesResponse};
+use crate::{GetNodesRequest, GetNodesResponse};
 use crate::{Key, Limiter};
 use derive_more::{From, Into};
 use errgonomic::handle;
@@ -29,7 +29,7 @@ impl Client {
         Ok(handle!(Self::try_from(key), TryFromKeyFailed))
     }
 
-    pub async fn get_nodes(&self, request: &GetNodesRequestRef<'_>) -> Result<GetNodesResponse, ClientGetNodesError> {
+    pub async fn get_nodes(&self, request: &GetNodesRequest<'_>) -> Result<GetNodesResponse, ClientGetNodesError> {
         use ClientGetNodesError::*;
         let url = self
             .base

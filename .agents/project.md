@@ -79,6 +79,8 @@ Requirements:
 - Should have derives: `Eq`, `PartialEq`, `Hash`.
 - Every field must be a `Cow`.
 - Every field must have its own lifetime.
+  - Lifetime name should be short
+  - Lifetime name should match the name of the field (e.g. first letter)
 
 ## Request ref type
 

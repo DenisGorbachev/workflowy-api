@@ -522,6 +522,8 @@ Requirements:
 * Should have derives: `Eq`, `PartialEq`, `Hash`.
 * Every field must be a `Cow`.
 * Every field must have its own lifetime.
+  * Lifetime name should be short
+  * Lifetime name should match the name of the field (e.g. first letter)
 
 ### Request ref type
 
@@ -1889,11 +1891,8 @@ use tokio as _;
 mod client;
 pub use client::*;
 
-mod get_nodes_request_own;
-pub use get_nodes_request_own::*;
-
-mod get_nodes_request_ref;
-pub use get_nodes_request_ref::*;
+mod get_nodes_request;
+pub use get_nodes_request::*;
 
 mod get_nodes_response;
 pub use get_nodes_response::*;

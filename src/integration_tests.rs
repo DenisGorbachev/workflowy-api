@@ -1,4 +1,4 @@
-use crate::{Client, GetNodesRequestRef, ParentId};
+use crate::{Client, GetNodesRequest, ParentId};
 use std::clone::Clone;
 use std::error::Error;
 
@@ -12,9 +12,7 @@ static_env_var!(TEST_WORKFLOWY_API_KEY);
 
 #[tokio::test]
 async fn must_get_nodes() -> Result<(), Box<dyn Error>> {
-    let request = GetNodesRequestRef {
-        parent_id: ParentId::Root,
-    };
+    let request = GetNodesRequest::from(ParentId::Root);
 
     let client = Client::new((*TEST_WORKFLOWY_API_KEY).clone())?;
     let nodes = client.get_nodes(&request).await?;
