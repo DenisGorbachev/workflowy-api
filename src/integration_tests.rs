@@ -19,7 +19,7 @@ async fn must_get_nodes() -> Result<(), Box<dyn Error>> {
         parent_id: "None",
     };
 
-    let nodes = CLIENT.get_nodes(request).await?;
+    let nodes = CLIENT.get_nodes(&request).await?;
     assert!(!nodes.nodes.is_empty());
 
     Ok(())
