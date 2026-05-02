@@ -1376,6 +1376,12 @@ version = "0.1.0"
 source = "git+https://github.com/DenisGorbachev/standard-traits#b8d3c44955ba00f7b9e5b535a056363e83fd685d"
 
 [[package]]
+name = "static-env-var"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a2e8b27dab646ce4aac108e43cb4e0bb13cf9f4bb5cea27592abf251203df8ca"
+
+[[package]]
 name = "subtle"
 version = "2.6.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2037,6 +2043,7 @@ dependencies = [
  "governor",
  "reqwest",
  "serde",
+ "static-env-var",
  "subtype",
  "thiserror",
  "timestamp-please",
