@@ -1,1 +1,1 @@
-pub type Key = String;
+pub type Key = secrecy::SecretString;

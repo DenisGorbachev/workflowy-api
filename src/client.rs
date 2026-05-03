@@ -4,6 +4,7 @@ use derive_more::{From, Into};
 use errgonomic::handle;
 use reqwest::Client as HttpClient;
 use reqwest::header::{AUTHORIZATION, HeaderMap, HeaderValue};
+use secrecy::ExposeSecret as _;
 use serde::de::DeserializeOwned;
 use std::sync::LazyLock;
 use thiserror::Error;
@@ -92,11 +93,11 @@ impl TryFrom<Key> for Client {
 
     fn try_from(key: Key) -> Result<Self, Self::Error> {
         use ConvertKeyToClientError::*;
-        let authorization = format!("Bearer {key}");
-        let mut authorization_header = handle!(HeaderValue::try_from(authorization), HeaderValueTryFromFailed);
-        authorization_header.set_sensitive(true);
+        let header_value_raw = format!("Bearer {}", key.expose_secret());
+        let mut header_value = handle!(HeaderValue::try_from(header_value_raw), HeaderValueTryFromFailed, key);
+        header_value.set_sensitive(true);
         let mut headers = HeaderMap::new();
-        headers.insert(AUTHORIZATION, authorization_header);
+        headers.insert(AUTHORIZATION, header_value);
         let inner = HttpClient::builder().default_headers(headers).build();
         let inner = handle!(inner, BuildHttpClientFailed);
         Ok(Self::from(inner))
@@ -106,7 +107,7 @@ impl TryFrom<Key> for Client {
 #[derive(Error, Debug)]
 pub enum ConvertKeyToClientError {
     #[error("failed to convert Workflowy API key into an authorization header value")]
-    HeaderValueTryFromFailed { source: reqwest::header::InvalidHeaderValue },
+    HeaderValueTryFromFailed { source: reqwest::header::InvalidHeaderValue, key: Key },
     #[error("failed to build HTTP client")]
     BuildHttpClientFailed { source: reqwest::Error },
 }

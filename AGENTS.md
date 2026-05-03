@@ -2718,6 +2718,7 @@ derive_more = { version = "2.1.1", features = ["full"] }
 errgonomic = "0.5.1"
 governor = "0.10.4"
 reqwest = { version = "0.13.3", features = ["json", "query"] }
+secrecy = "0.10.3"
 serde = { version = "1.0.228", features = ["derive"] }
 thiserror = "2.0.18"
 timestamp-please = { version = "0.2.0", features = ["serde"] }
