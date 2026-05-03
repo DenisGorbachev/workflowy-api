@@ -9,6 +9,11 @@ A Rust package with the following crates:
 
 Requirements:
 
+- Must contain files:
+  - [`Cargo.toml`](#cargotoml)
+
+## Cargo.toml
+
 - Must have dependencies:
   - `reqwest`
   - `governor`
@@ -19,6 +24,7 @@ Requirements:
   - `serde`
 - May have dependencies:
   - `strum`
+- Every dependency version must be specified only up to the first non-zero part (good: "1", "0.3", bad: "1.0", "0.3.3")
 
 ## `workflowy-api` lib crate
 
