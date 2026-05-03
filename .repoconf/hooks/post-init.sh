@@ -10,13 +10,19 @@ cargo_toml="$dir/Cargo.toml"
 #mise_toml="$dir/mise.toml"
 
 read -r -p "Rust package name (default: $name_new_default): " name_new
-read -r -p "Rust package description: " description
-read -r -p "Rust package title (default: same as description): " title
-
 if [[ -z $name_new ]]; then
   name_new=$name_new_default
 fi
 
+description=""
+while [[ -z $description ]]; do
+  read -r -p "Rust package description: " description
+  if [[ -z $description ]]; then
+    echo "Rust package description is required for public packages." >&2
+  fi
+done
+
+read -r -p "Rust package title for README (default: same as description): " title
 if [[ -z $title ]]; then
   title=$description
 fi
