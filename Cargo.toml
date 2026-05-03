@@ -28,11 +28,11 @@ exclude = [
 ]
 
 [package.metadata.details]
-title = ""
+title = "Workflowy API client"
 tagline = ""
 summary = ""
 announcement = ""
-readme = { generate = false }
+readme = { generate = true }
 
 [dependencies]
 derive_more = { version = "2", features = ["full"] }

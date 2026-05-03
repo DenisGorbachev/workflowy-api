@@ -2713,11 +2713,11 @@ exclude = [
 ]
 
 [package.metadata.details]
-title = ""
+title = "Workflowy API client"
 tagline = ""
 summary = ""
 announcement = ""
-readme = { generate = false }
+readme = { generate = true }
 
 [dependencies]
 derive_more = { version = "2", features = ["full"] }
@@ -2739,7 +2739,7 @@ static-env-var = "0.1.0"
 ### src/lib.rs
 
 ```rust
-//! This is a module-level comment for a Rust lib
+//! This crate provides a basic [`Client`] for a [Workflowy API](https://beta.workflowy.com/api-reference).
 
 #![deny(clippy::arithmetic_side_effects)]
 #![deny(unused_crate_dependencies)]

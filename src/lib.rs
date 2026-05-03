@@ -1,4 +1,4 @@
-//! This is a module-level comment for a Rust lib
+//! This crate provides a basic [`Client`] for a [Workflowy API](https://beta.workflowy.com/api-reference).
 
 #![deny(clippy::arithmetic_side_effects)]
 #![deny(unused_crate_dependencies)]
