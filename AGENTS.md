@@ -463,7 +463,7 @@ Requirements:
   * `serde`
 * May have dependencies:
   * `strum`
-* Every dependency version must be specified only up to the first non-zero part (good: "1", "0.3", bad: "1.0", "0.3.3")
+* Every version under `dependencies` key must be specified only up to the first non-zero part (good: "1", "0.3", bad: "1.0", "0.3.3")
 
 ### `workflowy-api` lib crate
 
@@ -2720,16 +2720,16 @@ announcement = ""
 readme = { generate = false }
 
 [dependencies]
-derive_more = { version = "2.1.1", features = ["full"] }
-errgonomic = "0.5.1"
-governor = "0.10.4"
-reqwest = { version = "0.13.3", features = ["json", "query"] }
-secrecy = "0.10.3"
-serde = { version = "1.0.228", features = ["derive"] }
-thiserror = "2.0.18"
-timestamp-please = { version = "0.2.0", features = ["serde"] }
-url = "2.5.8"
-url-macro = "0.2.3"
+derive_more = { version = "2", features = ["full"] }
+errgonomic = "0.5"
+governor = "0.10"
+reqwest = { version = "0.13", features = ["json", "query"] }
+secrecy = "0.10"
+serde = { version = "1", features = ["derive"] }
+thiserror = "2"
+timestamp-please = { version = "0.2", features = ["serde"] }
+url = "2"
+url-macro = "0.2"
 
 [dev-dependencies]
 tokio = { version = "1.52.1", features = ["macros", "rt-multi-thread"] }
