@@ -2685,7 +2685,7 @@ cfg_if::cfg_if! {
 ```toml
 [package]
 name = "workflowy-api"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2024"
 rust-version = "1.85.0"
 description = "Workflowy API client"
@@ -2742,7 +2742,7 @@ static-env-var = "0.1.0"
 //! This crate provides a basic [`Client`] for a [Workflowy API](https://beta.workflowy.com/api-reference).
 
 #![deny(clippy::arithmetic_side_effects)]
-#![deny(unused_crate_dependencies)]
+#![cfg_attr(not(test), deny(unused_crate_dependencies))]
 
 mod client;
 
