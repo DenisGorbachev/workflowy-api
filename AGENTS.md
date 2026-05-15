@@ -482,6 +482,8 @@ Requirements:
   * Common data types in `common` module
   * [Technical types](#technical-type) at the top level (attached to src/lib.rs)
 
+### `workflowy-api` bin crate
+
 ### Key
 
 A type alias for API key as `secrecy::SecretString`.
@@ -515,8 +517,6 @@ Requirements:
 * Every field must have a type exported from `governor`
 * Must have impls:
   * `Default`
-
-### `workflowy-api` bin crate
 
 ### Technical type
 
