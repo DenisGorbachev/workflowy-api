@@ -8,7 +8,7 @@ pub struct GetNodesRequest<'p> {
     pub parent_id: Cow<'p, ParentId<'p>>,
 }
 
-impl<'p> GetNodesRequest<'p> {}
+impl GetNodesRequest<'_> {}
 
 impl<'p> From<ParentId<'p>> for GetNodesRequest<'p> {
     fn from(parent_id: ParentId<'p>) -> Self {

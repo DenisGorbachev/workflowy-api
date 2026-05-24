@@ -17,7 +17,7 @@ pub enum ParentId<'a> {
     Custom(Cow<'a, str>),
 }
 
-impl<'a> ParentId<'a> {
+impl ParentId<'_> {
     pub fn as_ref(&self) -> ParentId<'_> {
         match self {
             Root => ParentId::Root,
