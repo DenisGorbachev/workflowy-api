@@ -262,6 +262,7 @@ const parts = (await Promise.all([
   includeFile(".agents/general.md"),
   includeFileIfCargoDependencyExists("serde", ".agents/crates/serde.md"),
   includeFileIfCargoDependencyExists("subtype", ".agents/crates/subtype.md"),
+  includeFileIfCargoDependencyExists("clap", ".agents/cli.md"),
   includeFileIfExists(".agents/project.md"),
   includeFileIfExists(".agents/knowledge.md"),
   includeFileIfExists(".agents/docs.md"),
@@ -270,6 +271,7 @@ const parts = (await Promise.all([
   includeCargoDependencyFileIfExists("errgonomic", "DOCS.md"),
   Promise.resolve("## Project files"),
   includeFile("Cargo.toml"),
+  includeFile("fnox.toml"),
   includeFileIfExists("src/main.rs"),
   includeFileIfExists("src/lib.rs"),
 ])).filter((part): part is string => !!part && part.length > 0)

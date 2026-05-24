@@ -2,7 +2,7 @@
 name = "workflowy-api"
 version = "0.1.1"
 edition = "2024"
-rust-version = "1.85.0"
+rust-version = "1.93.1"
 description = "Workflowy API client"
 license = "Apache-2.0 OR MIT"
 homepage = "https://github.com/DenisGorbachev/workflowy-api"
@@ -15,11 +15,14 @@ exclude = [
     "*.local.*",
     "doc/dev",
     "specs",
+    "AGENTS.ts",
     "README.ts",
     "AGENTS*.md",
     "CLAUDE*.md",
+    "deno.lock",
     "deno.json",
     "commitlint.config.mjs",
+    "fnox.toml",
     "lefthook.yml",
     "mise.toml",
     "rumdl.toml",
