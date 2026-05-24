@@ -2,7 +2,7 @@
 name = "workflowy-api"
 version = "0.1.1"
 edition = "2024"
-rust-version = "1.93.1"
+rust-version = "1.85.0"
 description = "Workflowy API client"
 license = "Apache-2.0 OR MIT"
 homepage = "https://github.com/DenisGorbachev/workflowy-api"
@@ -52,3 +52,4 @@ url-macro = "0.2"
 [dev-dependencies]
 tokio = { version = "1.52.1", features = ["macros", "rt-multi-thread"] }
 static-env-var = "0.1.0"
+

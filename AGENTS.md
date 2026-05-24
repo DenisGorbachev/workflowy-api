@@ -2757,8 +2757,11 @@ static-env-var = "0.1.0"
 if_missing = "error"
 
 [providers]
-keychain = { type = "keychain", service = "rust-public-lib-template" }
-pass = { type = "password-store", prefix = "rust-public-lib-template/" }
+keychain = { type = "keychain", service = "workflowy-api" }
+pass = { type = "password-store", prefix = "workflowy-api/" }
+
+[secrets]
+TEST_WORKFLOWY_API_KEY= { provider = "pass", value = "TEST_WORKFLOWY_API_KEY" }
 ```
 
 ### src/lib.rs
