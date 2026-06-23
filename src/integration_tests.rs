@@ -1,7 +1,6 @@
 use crate::{Client, ClientGetNodesError, ClientNewError, GetNodesRequest, ParentId};
 use errgonomic::handle;
 use static_env_var::static_env_var;
-use std::clone::Clone;
 use thiserror::Error;
 
 static_env_var!(TEST_WORKFLOWY_API_KEY);
