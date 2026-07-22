@@ -6,5 +6,9 @@ if_missing = "error"
 keychain = { type = "keychain", service = "workflowy-api" }
 pass = { type = "password-store", prefix = "workflowy-api/" }
 
-[secrets]
-TEST_WORKFLOWY_API_KEY= { provider = "pass", value = "TEST_WORKFLOWY_API_KEY" }
+[profiles]
+
+[profiles.test]
+
+[profiles.test.secrets]
+WORKFLOWY_API_KEY= { provider = "pass", value = "TEST_WORKFLOWY_API_KEY" }
