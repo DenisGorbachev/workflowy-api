@@ -425,7 +425,6 @@ Notes:
 
 * Never use the following operators: `+, +=, -, -=, *, *=, /, /=, %, %=, -, <<, <<=, >>, >>=`
 * Never use the following traits: `core::ops::{Add, AddAssign, Sub, SubAssign, Mul, MulAssign, Div, DivAssign, Rem, RemAssign, Neg, Shl, ShlAssign, Shr, ShrAssign}`
-* Every crate must have a `#![deny(clippy::arithmetic_side_effects)]` attribute
 * Prefer `checked` versions of arithmetic operations
 * Every call to an `overflowing`, `saturating`, `wrapping` version must have a single-line comment above it that starts with "SAFETY: " and describes why calling this version is safe in this specific case
 * Use `num` crate items if necessary (for example, to implement a function that calls arithmetic methods on a generic type)
@@ -2740,16 +2739,16 @@ cfg_if::cfg_if! {
 ### Cargo.toml
 
 ```toml
-[package]
-name = "workflowy-api"
+[workspace]
+resolver = "3"
+
+[workspace.package]
 version = "0.1.1"
 edition = "2024"
 rust-version = "1.85.0"
-description = "Workflowy API client"
 license = "Apache-2.0 OR MIT"
 homepage = "https://github.com/DenisGorbachev/workflowy-api"
 repository = "https://github.com/DenisGorbachev/workflowy-api"
-readme = "README.md"
 keywords = []
 categories = []
 exclude = [
@@ -2765,28 +2764,45 @@ exclude = [
     "deno.json",
     "commitlint.config.mjs",
     "fnox.toml",
-    "lefthook.yml",
     "mise.toml",
     "rumdl.toml",
     "rustfmt.toml",
     ".yolobox"
 ]
 
-[package.metadata.details]
+[workspace.metadata.details]
+name = "workflowy-api"
 title = "Workflowy API client"
-tagline = ""
-summary = ""
-announcement = ""
 readme = { generate = true }
 
-[lints.rust]
+[workspace.lints.rust]
 redundant_imports = "deny"
 unused_import_braces = "deny"
 # unused_qualifications must not be "deny" because our code style has multiple `use Foo::*;`, and some macros (derive_more::Display, strum::Display, strum::EnumString) produce code with full qualifications
 # unused_qualifications = "deny"
 
-[lints.clippy]
+[workspace.lints.clippy]
 absolute_paths = "deny"
+arithmetic_side_effects = "deny"
+
+[package]
+name = "workflowy-api"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+description = "A Workflowy API client."
+license.workspace = true
+homepage.workspace = true
+repository.workspace = true
+keywords.workspace = true
+categories.workspace = true
+exclude.workspace = true
+
+[package.metadata.details]
+title = "Workflowy API client"
+
+[lints]
+workspace = true
 
 [dependencies]
 derive_more = { version = "2", features = ["full"] }
@@ -2829,7 +2845,6 @@ WORKFLOWY_API_KEY= { provider = "pass", value = "TEST_WORKFLOWY_API_KEY" }
 ```rust
 //! This crate provides a basic [`Client`] for a [Workflowy API](https://beta.workflowy.com/api-reference).
 
-#![deny(clippy::arithmetic_side_effects)]
 #![cfg_attr(not(test), deny(unused_crate_dependencies))]
 
 mod client;

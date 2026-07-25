@@ -1,13 +1,13 @@
-[package]
-name = "workflowy-api"
+[workspace]
+resolver = "3"
+
+[workspace.package]
 version = "0.1.1"
 edition = "2024"
 rust-version = "1.85.0"
-description = "Workflowy API client"
 license = "Apache-2.0 OR MIT"
 homepage = "https://github.com/DenisGorbachev/workflowy-api"
 repository = "https://github.com/DenisGorbachev/workflowy-api"
-readme = "README.md"
 keywords = []
 categories = []
 exclude = [
@@ -23,28 +23,45 @@ exclude = [
     "deno.json",
     "commitlint.config.mjs",
     "fnox.toml",
-    "lefthook.yml",
     "mise.toml",
     "rumdl.toml",
     "rustfmt.toml",
     ".yolobox"
 ]
 
-[package.metadata.details]
+[workspace.metadata.details]
+name = "workflowy-api"
 title = "Workflowy API client"
-tagline = ""
-summary = ""
-announcement = ""
 readme = { generate = true }
 
-[lints.rust]
+[workspace.lints.rust]
 redundant_imports = "deny"
 unused_import_braces = "deny"
 # unused_qualifications must not be "deny" because our code style has multiple `use Foo::*;`, and some macros (derive_more::Display, strum::Display, strum::EnumString) produce code with full qualifications
 # unused_qualifications = "deny"
 
-[lints.clippy]
+[workspace.lints.clippy]
 absolute_paths = "deny"
+arithmetic_side_effects = "deny"
+
+[package]
+name = "workflowy-api"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+description = "A Workflowy API client."
+license.workspace = true
+homepage.workspace = true
+repository.workspace = true
+keywords.workspace = true
+categories.workspace = true
+exclude.workspace = true
+
+[package.metadata.details]
+title = "Workflowy API client"
+
+[lints]
+workspace = true
 
 [dependencies]
 derive_more = { version = "2", features = ["full"] }
@@ -61,4 +78,3 @@ url-macro = "0.2"
 [dev-dependencies]
 tokio = { version = "1.52.1", features = ["macros", "rt-multi-thread"] }
 static-env-var = "0.1.0"
-

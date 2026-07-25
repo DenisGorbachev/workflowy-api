@@ -11,7 +11,6 @@ node = "24.15.0"
 deno = "1.46.1"
 fnox = "1.21.0"
 cargo-binstall = "1.10.15"
-"npm:lefthook" = "1.8.5"
 "npm:@commitlint/config-conventional" = "19.6.0"
 "npm:@commitlint/cli" = "19.6.0"
 "npm:@commitlint/types" = "19.5.0"
@@ -21,9 +20,13 @@ cargo-binstall = "1.10.15"
 "cargo:cargo-expand" = "1.0.114"
 "cargo:taplo-cli" = "0.10.0"
 "cargo:rumdl" = "0.1.0"
+"cargo:sd" = "1.0.0"
 
 [env]
 _.fnox-env = { tools = true }
+
+[hooks]
+postinstall = { task = "git:install-hooks" }
 
 [tasks."build"]
 run = "cargo build --workspace"
@@ -56,30 +59,35 @@ run = "mise run test:code -- --ignore-default-filter --max-fail 1 'slow_tests::'
 [tasks."test:docs"]
 run = "cargo test --workspace --doc --all-features --no-fail-fast --quiet"
 
+# "fix" may modify the files that are read by "test", so "test" may actually test an old version. This risk is small and acceptable, because the tests are re-run in CI.
+[tasks."pre-commit"]
+alias = "pre-merge-commit"
+depends = ["fix-and-stage", "test"]
+
+[tasks."fix-and-stage"]
+depends = ["fix"]
+run = [{ task = "git:stage-fixed" }]
+
+[tasks."post-commit"]
+depends = ["git:repair-index"]
+
+[tasks."commit-msg"]
+run = 'mise run commitlint -- --edit "$@"'
+
 [tasks."fix"]
-# Run code fixes in parallel with project-file fixes because `fix:code` is the longest path.
 depends = ["fix:code", "fix:aux"]
 
 [tasks."fix:aux"]
-# Run config fixes before generated instructions because AGENTS.ts includes config files such as fnox.toml.
-# Run markdown fixes last because they should format generated markdown and stage it after generation.
-run = """
-mise run fix:configs
-mise run fix:agents
-mise run fix:docs
-"""
+depends = ["fix:configs", "fix:docs", "fix:agents", "fix:readme"]
 
 [tasks."fix:configs"]
-depends = ["fix:fnox"]
+depends = ["fix:cargo", "fix:fnox"]
 
 [tasks."fix:code"]
-# run the tasks sequentially because they modify the same files
-run = """
-mise run fix:code:warnings
-mise run fix:code:style
-"""
+depends = ["fix:name", "fix:code:style"]
 
 [tasks."fix:code:warnings"]
+depends = ["fix:cargo"]
 # second pass is needed because "cargo clippy --fix" exits with 0 even if some warnings remain
 env = { __CARGO_FIX_YOLO = 'yeah' }
 run = """
@@ -88,51 +96,42 @@ cargo clippy --workspace --all-targets --all-features -- -D warnings
 """
 
 [tasks."fix:code:style"]
+# Run after `fix:code:warnings` because both tasks modify the same code files.
+depends = ["fix:code:warnings"]
 run = "cargo fmt --all"
 
 [tasks."fix:docs"]
+depends = ["fix:agents", "fix:readme"]
 # `rumdl check --fix` may modify any file, so we need to stage all markdown files.
 # use `rumdl check --fix` instead of `rumdl fmt` because `rumdl check --fix` exits with 1 if errors remain (since v0.1.0)
 # use a quoted git pathspec so ignored files (e.g. `*.local.md`) don't fail the task.
-run = """
-rumdl check --fix
-git add -- '*.md'
-"""
+run = "rumdl check --fix && git add -- '*.md'"
 
 [tasks."fix:agents"]
-run = """
-#!/usr/bin/env bash
-set -euo pipefail
-mise run gen:agents
-if [ -f AGENTS.md ]; then
-  # add AGENTS.md manually because it may not have been staged
-  git add AGENTS.md
-fi
-"""
+# "fix:agents" depends on "fix:code" because it reads the code files
+depends = ["fix:name", "fix:configs", "fix:code"]
+run = "mise run gen:agents && git add AGENTS.md"
 
-[tasks."watch"]
-run = """
-#!/usr/bin/env bash
-set -euo pipefail
-PWD=$(pwd)
-CMD_RAW="nextest run $*"
-CMD_NO_WHITESPACE="$(echo -e "${CMD_RAW}" | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')"
-cargo watch --clear --watch "$PWD" --exec "$CMD_NO_WHITESPACE" "$@"
-"""
+[tasks."fix:readme"]
+# "fix:readme" depends on "fix:code" because it reads the code files
+# skip in CI because `gen:readme` may fail due to transient network errors (e.g. GitHub server not responding). Note: there is no enforcement that committed generated READMEs are current (this is acceptable).
+depends = ["fix:name", "fix:code"]
+run = "if [ \"${CI+x}\" != x ]; then mise run gen:readme && git add -- ':(glob)**/README.md'; fi"
 
 [tasks."gen:readme"]
-run = "touch README.md && chmod 0644 README.md && ./README.ts --output README.md"
+run = "./README.ts"
 
 [tasks."gen:agents"]
-run = "touch AGENTS.md && chmod 0644 AGENTS.md && ./AGENTS.ts --output AGENTS.md"
+run = "./AGENTS.ts"
 
 [tasks."commitlint"]
-run = "commitlint --extends \"$(mise where npm:@commitlint/config-conventional)/lib/node_modules/@commitlint/config-conventional/lib/index.js\""
+run = "commitlint --extends \"$(mise where npm:@commitlint/config-conventional)/node_modules/@commitlint/config-conventional/lib/index.js\""
 
 [tasks."agent:docs:list"]
 run = "[ -d .agents/docs ] && find .agents/docs -type f -print || true"
 quiet = true
 
+# "fix" may modify the files that are read by "test", so "test" may actually test an old version. This risk is small and acceptable, because the tests are re-run in CI.
 [tasks."agent:on:stop"]
 depends = ["fix", "agent:test"]
 

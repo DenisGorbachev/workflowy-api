@@ -20,6 +20,10 @@ This crate provides a basic [`Client`] for a [Workflowy API](https://beta.workfl
 cargo add workflowy-api
 ```
 
+## Other packages
+
+This workspace has no other packages.
+
 ## Gratitude
 
 Like the project? [⭐ Star this repo](https://github.com/DenisGorbachev/workflowy-api) on GitHub!
