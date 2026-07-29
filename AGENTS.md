@@ -58,9 +58,10 @@ Notes:
   * Remove unnecessary code
   * Remove unnecessary allocations
   * Refactor code that converts between types into `From` / `Into` impls
+* Don't write the tests
 * Don't edit the files in the following top-level dirs: `specs`, `.agents`
-* Don't write the tests unless I ask you explicitly
-* If a later instruction overrides the former instruction: follow the later instruction (last override wins).
+* If a later instruction overrides the former instruction: follow the later instruction (last override wins)
+* If I explicitly ask to update the code in a way that deviates from the spec, update both the code and the spec
 * If you need to patch a dependency, tell me about it, but don't do it without my explicit permission
 * If you notice unexpected edits, keep them and don't mention them
 * If you notice incorrect code, tell me
