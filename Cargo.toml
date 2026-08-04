@@ -4,7 +4,7 @@ resolver = "3"
 [workspace.package]
 version = "0.1.1"
 edition = "2024"
-rust-version = "1.85.0"
+rust-version = "1.93.1"
 license = "Apache-2.0 OR MIT"
 homepage = "https://github.com/DenisGorbachev/workflowy-api"
 repository = "https://github.com/DenisGorbachev/workflowy-api"
