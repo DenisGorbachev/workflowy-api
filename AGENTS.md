@@ -83,12 +83,17 @@ Notes:
   * Examples
     * A task to write `impl From<Foo> for Bar` where `Foo` can't actually be infallibly converted to `Bar` (would require calling `unwrap`, which is bad) - in this case you should write `impl TryFrom<Foo> for Bar` and reply with "Foo can't be infallibly converted to Bar, so I implemented a fallible conversion instead".
     * A task to write a trait impl that only returns an error - in this case you should not write the trait impl but reply with "trait X can't be implemented for Foo because ..."
+* If a sentence starts with "Proposal: ":
+  * Evaluate it thorougly.
+  * If you agree:
+    * Then: implement it.
+    * Else: explain why you didn't implement it and brainstorm solutions.
 * If you resolve the blockers, remove them from blockers.md
 
 #### Review workflow
 
 * Output a full list of findings (not a shortlist)
-* Every finding in the full list must be formatted as `{ctid}: [{priority}] {title}. {body} ({references}). Proposed fixes: {fixes}` (I will identify the findings by chat thread ID in my answer)
+* Every finding in the full list must be formatted as `### {ctid}\n\n[{priority}] {title}. {body} ({references}). Proposed fixes: {fixes}` (I will identify the findings by chat thread ID in my answer)
   * `ctid` must be a [chat thread id](#chat-thread-id)
   * `priority` must be one of `P0`, `P1`, `P2`, `P3`.
   * `references` must be a comma-separated list of `reference`
@@ -97,14 +102,15 @@ Notes:
   * `line` must be the first line of the relevant code or text block
   * `fixes` must be one of the following:
     * If there is at least one proposed fix:
-      * Then: newline and a Markdown nested list of fixes where each fix must have a format `{number}. {description}` (the numbers should start from 1 for each list of fixes)
+      * Then: "\n\n" and a Markdown nested list of fixes where each fix must have a format `{number}. {description}` (the numbers should start from 1 for each list of fixes)
       * Else: the exact text "none."
 * If there are no findings, then start your reply with "No findings"
 * If I reply to your review with an ordered list, process each item in the following way:
   * "+" - "Think about this finding again, then apply the best fix according to your thinking process"
   * "+ {number}" - "Apply proposed fix at {number}"
   * "-" - "Don't apply any fixes"
-  * other - respond normally (keep the number in your response)
+  * other - respond normally (keep the `ctid` in your response)
+* If there are no more actionable items in the thread identified by a specific `ctid`: drop this `ctid` from your response.
 
 #### Debugging workflow
 
@@ -461,6 +467,9 @@ A function marked with `#[test]` or `#[tokio::test]`.
 
 * Write `macro_rules!` macros to reduce boilerplate
 * If you see similar code in different places, write a macro and replace the similar code with a macro call
+* If the macros has variadic args:
+  * Then: do add `$(,)?`
+  * Else: don't add `$(,)?`
 
 #### Shell
 
