@@ -6,10 +6,7 @@ env = "exec"
 [providers]
 keychain = { type = "keychain", service = "workflowy-api" }
 pass = { type = "password-store", prefix = "workflowy-api/" }
-age = { type = "age", recipients = [
-    "age1sf4r4amev2svqr6llwg8hgtz9n7p5qdh7hh0mavcshzfrmgfduksnq3hql",
-    "age1605gsnxpe536sprwccyumq74veg0g80u55n8ggems0t8deau6qdsfnq3m3"
-] }
+age = { type = "age", recipients = ["age1sf4r4amev2svqr6llwg8hgtz9n7p5qdh7hh0mavcshzfrmgfduksnq3hql","age1605gsnxpe536sprwccyumq74veg0g80u55n8ggems0t8deau6qdsfnq3m3","age15xqfgqu79etfnd047vkaypq4h3nh56xw6kywhn7uwhrdylmlyd4q0r9a3z"]}
 
 [profiles]
 
