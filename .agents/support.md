@@ -77,11 +77,26 @@
 - Must update the original name source: raw workspace metadata or kebab-case root package name.
 - Must roll back every file edit and directory move on failure, then remove transaction data.
 
+## fnox.toml
+
+- Must contain `env = "exec"`.
+- Must contain `providers.age`.
+  - Must have `type = "age"`.
+  - Must contain a `recipients` array with at least two unique native age recipients.
+  - The template baseline recipients must be the host LAK and sandbox LAK.
+  - A GitHub repository with test secrets must additionally contain its repository-specific CAK recipient.
+- Every key under `profiles.test.secrets` must have `provider = "age"`.
+
 ## .mise/tasks/fix/fnox.sh
 
 - Must `wait_for=["fix:name"]`
-- Must validate that `providers.keychain.service` and `providers.pass.prefix` equal `git:repo-name` and `git:repo-name/`, respectively.
+- Must validate that `providers.keychain.service` equals `git:repo-name`.
 - Must not migrate secrets between old and new identifiers.
+
+## .mise/tasks/fnox/github/init-age-key.sh
+
+- May clear the clipboard without preserving contents that predate the task.
+- May treat write races as acceptable because the script is run by a single user who guarantees that other scripts do not run concurrently.
 
 ## .mise/tasks/fix/cargo.sh
 
