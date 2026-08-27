@@ -11,8 +11,8 @@ Write code that minimizes losses:
 
 - [Avoid data loss](#avoid-data-loss).
 - [Minimize hardcoded data](#minimize-hardcoded-data).
-- Minimize the execution time of the program.
-- Minimize the "User time loss expectation" (see below)
+- Minimize the memory consumption.
+- Minimize the execution time.
 
 ### Avoid data loss
 
@@ -43,7 +43,6 @@ Notes:
       - Keyspace name
   - Recommendations:
     - When in doubt, prefer accepting a parameter instead of defining a constant
-- Follow the requirements in "Producing expression of type T" (see below)
 
 ## Development workflow
 
@@ -104,7 +103,8 @@ Notes:
 ## Messages from agent to user
 
 - Use `~` in paths
-- Give each independently addressable item in a multi-item message a unique [chat thread ID](#chat-thread-id)
+- Format your message as a sequence of independently addressable items where each item begins with a [chat thread id heading](#chat-thread-id-heading)
+- Don't mention successful verifications and checks unless asked explicitly.
 
 ## Commands
 
@@ -204,6 +204,7 @@ Notes:
 
 ## Functions
 
+- Prefer the weakest sufficient trait bound for inputs and associated types (`FnOnce` over `FnMut` over `Fn`) (`PartialOrd` over `Ord`) (`PartialEq` over `Eq`)
 - Implement proper error handling using macros from `errgonomic` crate instead of `unwrap` or `expect` (in normal code and in tests)
   - Use `expect` only in exceptional cases where you can prove that it always succeeds, and provide the proof as the first argument to `expect` (the proof must start with "always succeeds because")
 - Prefer streams and iterators:
@@ -423,13 +424,11 @@ Notes:
 
 ## Arithmetics
 
-- Never use the following operators: `+, +=, -, -=, *, *=, /, /=, %, %=, -, <<, <<=, >>, >>=`
-- Never use the following traits: `core::ops::{Add, AddAssign, Sub, SubAssign, Mul, MulAssign, Div, DivAssign, Rem, RemAssign, Neg, Shl, ShlAssign, Shr, ShrAssign}`
+- Don't use the impls of traits `core::ops::{Add, AddAssign, Sub, SubAssign, Mul, MulAssign, Div, DivAssign, Rem, RemAssign, Neg, Shl, ShlAssign, Shr, ShrAssign}` or their operators unless they don't panic or silently overflow
+- Write and use arithmetic trait impls that don't panic or silently overflow
 - Prefer `checked` versions of arithmetic operations
 - Every call to an `overflowing`, `saturating`, `wrapping` version must have a single-line comment above it that starts with "SAFETY: " and describes why calling this version is safe in this specific case
 - Use `num` crate items if necessary (for example, to implement a function that calls arithmetic methods on a generic type)
-
-Note: the arithmetic operators and traits are banned because they may panic or silently overflow.
 
 ## Index access
 
@@ -493,6 +492,16 @@ Examples:
 Notes:
 
 - Should match the thread topic
+
+## Chat thread id heading
+
+A Markdown heading level 3 that contains only [chat thread id](#chat-thread-id).
+
+Examples:
+
+- `### RVC`
+- `### AKE`
+- `### LMY`
 
 ## findings.md
 
