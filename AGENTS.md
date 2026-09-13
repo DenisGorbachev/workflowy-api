@@ -970,7 +970,7 @@ tokio = { version = "1.52.1", features = ["macros", "rt-multi-thread"] }
 static-env-var = "0.1.0"
 ```
 
-#### src/lib.rs
+### src/lib.rs
 
 ```rust
 //! This crate provides a basic [`Client`] for a [Workflowy API](https://beta.workflowy.com/api-reference).
