@@ -710,6 +710,8 @@ task.output = "keep-order"
 node = "24.15.0"
 deno = "1.46.1"
 fnox = "1.33.1"
+fd = "10.4.2"
+"github:ewhauser/shuck" = "0.2.2"
 "aqua:rvben/rumdl" = "0.1.0"
 "npm:@commitlint/config-conventional" = "19.6.0"
 "npm:@commitlint/cli" = "19.6.0"
@@ -721,11 +723,12 @@ fnox = "1.33.1"
 "cargo:cargo-expand" = "1.0.114"
 "cargo:taplo-cli" = "0.10.0"
 "cargo:sd" = "1.0.0"
-fd = "10.4.2"
-shellcheck = "0.11.0"
 
 [hooks]
 postinstall = { task = "git:install-hooks" }
+
+[env]
+SHUCK_CACHE_DIR = "{{config_root}}/.cache"
 
 [tasks."build"]
 run = "cargo build --workspace"
@@ -757,6 +760,9 @@ run = "cargo clippy --locked --workspace --all-targets --all-features -- -D warn
 
 [tasks."lint:code:style"]
 run = "cargo fmt --all -- --check"
+
+[tasks."lint:shell"]
+run = "shuck check ."
 
 [tasks."lint:docs"]
 run = "rumdl check"
@@ -795,7 +801,10 @@ depends = ["fix:configs", "fix:docs", "fix:agents", "fix:readme"]
 depends = ["fix:cargo", "fix:fnox"]
 
 [tasks."fix:code"]
-depends = ["fix:name", "fix:code:style"]
+depends = ["fix:name", "fix:code:style", "fix:shell"]
+
+[tasks."fix:shell"]
+run = "shuck check --fix ."
 
 [tasks."fix:code:warnings"]
 depends = ["fix:cargo"]
@@ -836,7 +845,7 @@ output = "interleave"
 quiet = true
 
 [tasks."agent:on:stop"]
-depends = ["cargo:validate-config", "lint:shell"]
+depends = ["cargo:validate-config", "fix:shell"]
 run = [{ task = "fix" }, { task = "agent:test" }]
 
 [tasks."agent:test"]
@@ -909,6 +918,7 @@ exclude = [
     "fnox.toml",
     "mise.toml",
     "rumdl.toml",
+    "shuck.toml",
     "rustfmt.toml",
     ".yolobox"
 ]
