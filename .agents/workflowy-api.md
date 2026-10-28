@@ -190,11 +190,10 @@ The Node object
   **Inline styles** — markdown is parsed into HTML tags:
 
   | Markdown | HTML | Result |
-        |---|---|---|
+  |---|---|---|
   | `**text**` | `<b>text</b>` | **bold** |
   | `*text*` | `<i>text</i>` | *italic* |
   | `~~text~~` | `<s>text</s>` | ~~strikethrough~~ |
-
   | `` `text` `` | `<code>text</code>` | inline code |
   | `[text](url)` | `<a href="url">text</a>` | hyperlink |
   | `[YYYY-MM-DD]` | — | date |
@@ -203,14 +202,13 @@ The Node object
   **Node layout** — markdown prefix sets the node's `layoutMode`:
 
   | Markdown | layoutMode | Result |
-        |---|---|---|
+  |---|---|---|
   | `# text` | `"h1"` | level 1 header |
   | `## text` | `"h2"` | level 2 header |
   | `### text` | `"h3"` | level 3 header |
   | `- text` | `"bullets"` | bullet point (default) |
   | `- [ ] text` | `"todo"` | uncompleted todo |
   | `- [x] text` | `"todo"` | completed todo |
-
   | `` ```code``` `` | `"code-block"` | code block |
   | `> text` | `"quote-block"` | quote block |
 
@@ -298,11 +296,10 @@ Updates the specified node by setting the values of the parameters passed. Any p
   **Inline styles** — markdown is parsed into HTML tags:
 
   | Markdown | HTML | Result |
-        |---|---|---|
+  |---|---|---|
   | `**text**` | `<b>text</b>` | **bold** |
   | `*text*` | `<i>text</i>` | *italic* |
   | `~~text~~` | `<s>text</s>` | ~~strikethrough~~ |
-
   | `` `text` `` | `<code>text</code>` | inline code |
   | `[text](url)` | `<a href="url">text</a>` | hyperlink |
   | `[YYYY-MM-DD]` | — | date |
@@ -311,14 +308,13 @@ Updates the specified node by setting the values of the parameters passed. Any p
   **Node layout** — markdown prefix sets the node's `layoutMode`:
 
   | Markdown | layoutMode | Result |
-        |---|---|---|
+  |---|---|---|
   | `# text` | `"h1"` | level 1 header |
   | `## text` | `"h2"` | level 2 header |
   | `### text` | `"h3"` | level 3 header |
   | `- text` | `"bullets"` | bullet point (default) |
   | `- [ ] text` | `"todo"` | uncompleted todo |
   | `- [x] text` | `"todo"` | completed todo |
-
   | `` ```code``` `` | `"code-block"` | code block |
   | `> text` | `"quote-block"` | quote block |
 
