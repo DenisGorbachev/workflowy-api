@@ -1559,7 +1559,7 @@ WORKFLOWY_API_KEY= { provider = "age", value = "YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+
 resolver = "3"
 
 [workspace.package]
-version = "0.1.1"
+version = "0.1.2"
 edition = "2024"
 rust-version = "1.93.1"
 license = "Apache-2.0 OR MIT"
